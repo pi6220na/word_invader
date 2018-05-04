@@ -49,8 +49,8 @@ var enemyBullet;
 var firingTimer = 0;
 var stateText;
 var livingEnemies = [];
-// Jeremy's global variables
 
+// Jeremy's global variables
 var wordsInArray = [
     ['','','','','','','','','','',
         '','','','','','','','','','',
@@ -101,18 +101,6 @@ function create() {
     enemyBullets.setAll('anchor.y', 1);
     enemyBullets.setAll('outOfBoundsKill', true);
     enemyBullets.setAll('checkWorldBounds', true);
-
-//         weapon = game.add.group();
-//         weapon = game.add.weapon(10, 'bullet');
-// //         weapons = this.add.weapon(40, 'bullet');
-
-//         weapons.enableBody = true;
-//         weapons.physicsBodyType = Phaser.Physics.ARCADE;
-    //weapons.createMultiple(30, 'enemyBullet');
-    // weapons.setAll('anchor.x', 0.5);
-    // weapons.setAll('anchor.y', 1);
-    // weapons.setAll('outOfBoundsKill', true);
-    // weapons.setAll('checkWorldBounds', true);
 
 
     weapons = game.add.group();
