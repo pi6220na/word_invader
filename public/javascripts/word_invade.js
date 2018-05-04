@@ -25,6 +25,7 @@ function preload() {
     game.load.image('ship', 'public/images/player.png');
     game.load.spritesheet('kaboom', 'public/images/explode.png', 128, 128);
     game.load.image('starfield', 'public/images/starfield.png');
+    game.load.image('diamond', 'public/images/diamond.png');
     game.load.image('background', 'public/images/background2.png');
     game.load.bitmapFont('desyrel', 'public/images/desyrel.png', 'public/images/desyrel.xml');
     game.load.bitmapFont('carrier', 'public/images/carrier_command.png', 'public/images/carrier_command.xml');
@@ -42,7 +43,7 @@ var starfield;
 var score = 0;
 var scoreString = '';
 var letter = '';
-var letterString = '';
+var typedString = '';
 var scoreText;
 var lives;
 var enemyBullet;
@@ -62,12 +63,27 @@ var globalX = 0;
 //var weapons;
 var emitter;
 var wordShip;
+
 var dropTimer = 0;
 var dropDelay = 1000;       // was 2000
-var dropDistance = 10;   // was 10 distance words (aliens) drop at each tic of the dropTimer
+var dropDistance = 30;   // was 10 distance words (aliens) drop at each tic of the dropTimer
+
+
 var countA = 0;
 var countString = '';
 var countText = '';
+
+var countLetter = 0;
+var countLstring = '';
+var countLetterText = '';
+var letterTimer = 0;
+var letterCounter = 0;
+
+var countWord = 0;
+var countWstring = '';
+var countWordText = '';
+var wordTimer = 0;
+var wordCounter = 0;
 
 
 function create() {
@@ -112,7 +128,7 @@ function create() {
 
     emitter = game.add.emitter(0, 0, 100);
 
-    emitter.makeParticles('kaboom');  // was diamond
+    emitter.makeParticles('diamond');  // was diamond also tried kaboom
     emitter.gravity = 200;
 
 
@@ -134,8 +150,8 @@ function create() {
     scoreText = game.add.text(10, 10, scoreString + score, { font: '34px Arial', fill: '#fff' });
 
     // Typed letters
-    letterString = 'You typed: ';
-    letterText = game.add.text((game.world.width / 2) - 100, 20, letterString + letter, { font: '34px Arial', fill: '#fff' });
+    typedString = 'You typed: ';
+    typedText = game.add.text((game.world.width / 2) - 100, 20, typedString + letter, { font: '34px Arial', fill: '#fff' });
 
 
     //  Lives
@@ -146,6 +162,17 @@ function create() {
     countString = 'Aliens Remaining: ';
     countA = 0;
     countText = game.add.text(10, game.world.height-40, countString + countA, { font: '34px Arial', fill: '#fff' });
+
+    // letters per minute
+    countLstring = 'Letters/minute: ';
+    countLetter = 0;
+    countLetterText = game.add.text((game.world.width/5)*2, game.world.height-40, countLstring + countLetter, { font: '34px Arial', fill: '#fff' });
+
+    // words per minute
+    countWstring = 'Words/minute: ';
+    countWord = 0;
+    countWordText = game.add.text((game.world.width/5)*3, game.world.height-40, countWstring + countWord, { font: '34px Arial', fill: '#fff' });
+
 
     // moved createAliens() here from above so that lives group exists prior to adding ship to it
     createAliens();
@@ -172,35 +199,16 @@ function create() {
     cursors = game.input.keyboard.createCursorKeys();
     fireButton = game.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR);
 
+    // add letter and word timers
+    letterTimer = game.time.now;
+    wordTimer = game.time.now;
+
 }
 
+
 function createAliens () {
-
+    // this function generates a list of 24 words (sprites).
     var index = 0;
-
-    // add bitmaptext word to aliens group - this works correctly but can't change individual letter color
-    // for (var y = 0; y < 4; y++)
-    // {
-    //     for (var x = 0; x < 10; x++)
-    //     {
-    //         // get a random word from list of over 3000 common American english words
-    //         var word = game.rnd.pick(words);
-    //         //console.log('got this far')
-    //         //var bmpText = game.make.bitmapText(x*48, y*50, 'desyrel', word, 40);
-    //         var bmpText = game.make.bitmapText(x*140, y*120, 'desyrel', word, 40);
-    //
-    //         //bmpText.tint = 0x555555;
-    //         document.getElementById("textloc").innerHTML = String(bmpText.tint);
-    //
-    //         wordsInArray[index] = word;
-    //         index+=1;
-    //         // bmpText.angle = 10;
-    //         aliens.add(bmpText);
-    //     }
-    // }
-    //
-    // console.log(wordsInArray);
-
 
     for (var y = 0; y < 4; y++)
     {
@@ -233,14 +241,14 @@ function createAliens () {
 
     //console.log(wordsInArray);
 
-
+    // this positions the aliens group top left corner
     aliens.x = (game.world.width/12);
     aliens.y = (game.world.height/8);
 
     //  All this does is basically start the invaders moving. Notice we're moving the Group they belong to, rather than the invaders directly.
     var tween = game.add.tween(aliens).to( { x: game.world.width/7 }, 2000, Phaser.Easing.Linear.None, true, 200, 1000, true);
 
-    //  When the tween loops it calls descend
+    //  When the tween loops it calls descend ::: this onLoop function is broken, known issue on Phaser.io
     tween.onLoop.add(descend, this);
 
     // console.log(tween);
@@ -280,7 +288,6 @@ function update() {
         dropTimer = game.time.now + dropDelay;   // was 2000
     }
 
-
     if (player.alive)
     {
         //  Reset the player, then check for movement keys
@@ -317,24 +324,38 @@ function update() {
         countText.text = countString + countA;
 
 
-        // loop through the word list (aliens) to see if any have hit the bottom of the screen, if yes, explode them
-        for (var x = 0; x < aliens.length; x++) {
+        game.world.setBounds(0,0, window.innerWidth*.9, (window.innerHeight*.9)-30);
+        //console.log(window.innerWidth*.9, window.innerHeight*.9);
 
+        // loop through the word list (aliens) to see if any have hit the bottom of the screen, if yes, explode them
+        //for (var x = 0; x < aliens.length; x++) {
+        for (var x = aliens.length-1; x >= 0; x--) {
             aliens.children[x].checkWorldBounds = true;
             aliens.children[x].events.onOutOfBounds.add(explody, this);
-
         }
+
     }
 }
 
 function explody(alien) {
 
-    alien.kill(); // subtracts one from countLiving total
+    alien.kill(); // subtracts one from countLiving total and removes from array
 
-    //  And create an explosion :)
-    var explosion = explosions.getFirstExists(false);
-    explosion.reset(alien.body.x, alien.body.y);
-    explosion.play('kaboom', 30, false, true);
+    // //  And create an explosion :)
+    // var explosion = explosions.getFirstExists(false);
+    // explosion.reset(alien.body.x, alien.body.y);
+    // explosion.play('kaboom', 30, false, true);
+
+
+    //  Position the emitter where the mouse/touch event was
+    emitter.x = alien.body.x;
+    emitter.y = alien.body.y;
+
+    //  The first parameter sets the effect to "explode" which means all particles are emitted at once
+    //  The second gives each particle a 2000ms lifespan
+    //  The third is ignored when using burst/explode mode
+    //  The final parameter (10) is how many particles will be emitted in this single burst
+    emitter.start(true, 2000, null, 20);
 
     if (aliens.countLiving() === 0)
     {
@@ -357,32 +378,47 @@ function explody(alien) {
 
 }
 
-function someFunction(stringIn) {
+function markLetters(stringIn) {
 
     word_in_progress = word_in_progress.concat(stringIn);
-    // document.getElementById("textloc").innerHTML = word_in_progress;
 
     letter = letter.concat(stringIn);
-    letterText.text = letterString + letter;
+    typedText.text = typedString + letter;
 
+    letterCounter++;
+
+    var num = (letterCounter / (game.time.now - letterTimer)) * 6000;
+    countLetter = num.toFixed(2);
+    // console.log('time now ' + game.time.now);
+    // console.log('letterTimer ' + letterTimer);
+    // console.log('letterCounter ' + letterCounter);
+    // console.log(((game.time.now - letterTimer) / letterCounter));
+
+    countLetterText.text = countLstring + countLetter;
 
     for (var x = 0; x < wordsInArray.length; x++) {
-        //console.log(wordsInArray[x]);
-        if (wordsInArray[x].startsWith(word_in_progress)) {
+        
+        if (wordsInArray[x].startsWith(word_in_progress)) {    // string function startsWith
             //alert('found a partial match')
             changeLetters(word_in_progress, x);
             if ((wordsInArray[x] === word_in_progress) && (word_in_progress !== "")) {
                 //alert('Exact Match!');
                 globalX = x;
+                
+                // shoot a bullet at word and make it explode
                 fireWord(aliens.children[x]);
-                //          collisionOne(aliens.children[x]);
-                //document.getElementById("textloc").innerHTML = "";
+                
+                // reset variables
                 letter = '';
                 word_in_progress = "";
                 wordsInArray[x] = "";
+                
+                // loop through all remaining words and reset color back to default
                 resetColors();
+                
+                // clear out letters that have been typed text area (top of web page)
                 letter = '';
-                letterText.text = letterString + letter;
+                typedText.text = typedString + letter;
 
             }
         }
@@ -394,23 +430,26 @@ function resetColors() {
     // loop through all words in the array and reset color back to original color
     for (var x = 0; x < wordsInArray.length; x++) {
 
+        // extract word from array so that individual letters can be changed
         var myWord = aliens.children[x];
-        // loop through the word, resetting each letter back to original color
 
-        //console.log(String(wordsInArray[x].length));
-
+        // loop through letters of word starting at the end and working toward beginning of word
+        // need to do this because of how the addColor function works - it stops when it hits a change
         for (var j = wordsInArray[x].length-1; j >= 0; j--) {
 
             myWord.addColor('#ffff00', j);
             //console.log(String(j));
         }
 
+        // put reset word back into array
         aliens.children[x] = myWord;
     }
 }
 
 function changeLetters(word_in_progress, x) {
+// change color of letter(s) of word to indicate that it has been typed by the user
 
+    // extract word from array
     var myWord = aliens.children[x];
 
     for (var j = 0; j < word_in_progress.length; j++) {
@@ -425,18 +464,7 @@ function changeLetters(word_in_progress, x) {
 
 function fireWord (target) {
 
-    //  Grab the first bullet we can from the pool
-    // var bullet = weapons.getFirstAlive(false);
-
-    //ship.rotation = game.physics.arcade.angleBetween(ship, target);
-
-    //bullet.fireRate = 100;
-    //bullet.bulletSpeed = 500;
-
-    //bullet.reset(ship.body.x, ship.body.y);
-    //game.physics.arcade.moveToObject(bullet,target,1200);  // was 120
-    //game.physics.arcade.velocityFromRotation(target.rotation, 400, bullet.body.velocity);
-
+    // shoot a bullet at the target word and make it explode
 
     //  The bullet will be automatically killed when it leaves the world bounds
     weapons.bulletKillType = Phaser.Weapon.KILL_WORLD_BOUNDS;
@@ -445,38 +473,26 @@ function fireWord (target) {
     weapons.bulletSpeed = 2600;
 
     //  Speed-up the rate of fire, allowing them to shoot 1 bullet every 60ms
-    weapons.fireRate = 100;
+    weapons.fireRate = 60;
 
-
+    // shoot from wordShip at bottom center of web page
     weapons.trackSprite(wordShip, 0, 0, true);
     weapons.fireAtSprite(target);
-    weapons.fire();
-
-    //  Position the emitter where the mouse/touch event was
-    // emitter.x = target.x;
-    // emitter.y = target.y;
-    //
-    // //  The first parameter sets the effect to "explode" which means all particles are emitted at once
-    // //  The second gives each particle a 2000ms lifespan
-    // //  The third is ignored when using burst/explode mode
-    // //  The final parameter (10) is how many particles will be emitted in this single burst
-    // emitter.start(true, 1000, null, 10);
-    //
+    weapons.fire();                 // shoot the bullet
 
     firingTimer = game.time.now + 20;   // was 2000
-
 
 }
 
 
-// uncomment to turn on debugging of aliens (words) sprites
+// uncomment to turn on debugging of alien (word) sprites
 function render() {
 
-    // for (var i = 0; i < aliens.length; i++)
-    // {
-    //     game.debug.body(aliens.children[i]);
-    //
-    // }
+    for (var i = 0; i < aliens.length; i++)
+    {
+        game.debug.body(aliens.children[i]);
+
+    }
 
     //game.debug.spriteInfo(weapons, 32, 450);
 
@@ -649,6 +665,7 @@ function restart () {
     lives.callAll('revive');
     //  And brings the aliens back from the dead :)
     aliens.removeAll();
+    wordShip.kill();
     createAliens();
 
     //revives the player
@@ -668,120 +685,120 @@ function onKeyPress(e) {
     var myKey = e.which;
 
     if (myKey === 97) {
-        someFunction('a');
+        markLetters('a');
     } else if (myKey === 98) {
-        someFunction('b');
+        markLetters('b');
     } else if (myKey === 99) {
-        someFunction('c');
+        markLetters('c');
     } else if (myKey === 100) {
-        someFunction('d');
+        markLetters('d');
     } else if (myKey === 101) {
-        someFunction('e');
+        markLetters('e');
     } else if (myKey === 102) {
-        someFunction('f');
+        markLetters('f');
     } else if (myKey === 103) {
-        someFunction('g');
+        markLetters('g');
     } else if (myKey === 104) {
-        someFunction('h');
+        markLetters('h');
     } else if (myKey === 105) {
-        someFunction('i');
+        markLetters('i');
     } else if (myKey === 106) {
-        someFunction('j');
+        markLetters('j');
     } else if (myKey === 107) {
-        someFunction('k');
+        markLetters('k');
     } else if (myKey === 108) {
-        someFunction('l');
+        markLetters('l');
     } else if (myKey === 109) {
-        someFunction('m');
+        markLetters('m');
     } else if (myKey === 110) {
-        someFunction('n');
+        markLetters('n');
     } else if (myKey === 111) {
-        someFunction('o');
+        markLetters('o');
     } else if (myKey === 112) {
-        someFunction('p');
+        markLetters('p');
     } else if (myKey === 113) {
-        someFunction('q');
+        markLetters('q');
     } else if (myKey === 114) {
-        someFunction('r');
+        markLetters('r');
     } else if (myKey === 115) {
-        someFunction('s');
+        markLetters('s');
     } else if (myKey === 116) {
-        someFunction('t');
+        markLetters('t');
     } else if (myKey === 117) {
-        someFunction('u');
+        markLetters('u');
     } else if (myKey === 118) {
-        someFunction('v');
+        markLetters('v');
     } else if (myKey === 119) {
-        someFunction('w');
+        markLetters('w');
     } else if (myKey === 120) {
-        someFunction('x');
+        markLetters('x');
     } else if (myKey === 121) {
-        someFunction('y');
+        markLetters('y');
     } else if (myKey === 122) {
-        someFunction('z');
+        markLetters('z');
     } else if (myKey === 65) {
-        someFunction('A');
+        markLetters('A');
     } else if (myKey === 66) {
-        someFunction('B');
+        markLetters('B');
     } else if (myKey === 67) {
-        someFunction('C');
+        markLetters('C');
     } else if (myKey === 68) {
-        someFunction('D');
+        markLetters('D');
     } else if (myKey === 69) {
-        someFunction('E');
+        markLetters('E');
     } else if (myKey === 70) {
-        someFunction('F');
+        markLetters('F');
     } else if (myKey === 71) {
-        someFunction('G');
+        markLetters('G');
     } else if (myKey === 72) {
-        someFunction('H');
+        markLetters('H');
     } else if (myKey === 73) {
-        someFunction('I');
+        markLetters('I');
     } else if (myKey === 74) {
-        someFunction('J');
+        markLetters('J');
     } else if (myKey === 75) {
-        someFunction('K');
+        markLetters('K');
     } else if (myKey === 76) {
-        someFunction('L');
+        markLetters('L');
     } else if (myKey === 77) {
-        someFunction('M');
+        markLetters('M');
     } else if (myKey === 78) {
-        someFunction('N');
+        markLetters('N');
     } else if (myKey === 79) {
-        someFunction('O');
+        markLetters('O');
     } else if (myKey === 80) {
-        someFunction('P');
+        markLetters('P');
     } else if (myKey === 81) {
-        someFunction('Q');
+        markLetters('Q');
     } else if (myKey === 82) {
-        someFunction('R');
+        markLetters('R');
     } else if (myKey === 83) {
-        someFunction('S');
+        markLetters('S');
     } else if (myKey === 84) {
-        someFunction('T');
+        markLetters('T');
     } else if (myKey === 85) {
-        someFunction('U');
+        markLetters('U');
     } else if (myKey === 86) {
-        someFunction('V');
+        markLetters('V');
     } else if (myKey === 87) {
-        someFunction('W');
+        markLetters('W');
     } else if (myKey === 88) {
-        someFunction('X');
+        markLetters('X');
     } else if (myKey === 89) {
-        someFunction('Y');
+        markLetters('Y');
     } else if (myKey === 90) {
-        someFunction('Z');
+        markLetters('Z');
     }
 
     if (myKey === 39) {
-        someFunction("'");
+        markLetters("'");
     }
 
     // enter key
     if (myKey === 13) {
         // clear out "you typed" area, reset all text to default color
         letter = '';
-        letterText.text = letterString + letter;
+        typedText.text = typedString + letter;
         word_in_progress = "";
         resetColors();
     }
