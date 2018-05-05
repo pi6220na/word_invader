@@ -179,17 +179,17 @@ function create() {
     countText = game.add.text(10, game.world.height, countString + countA, { font: '34px Arial', fill: '#fff' });
 
     // letters per minute
-    countLstring = 'Letters/minute (total): ';
+    countLstring = 'Letters/min (ttl): ';
     countLetter = 0;
     countLetterText = game.add.text((game.world.width/7)*2, game.world.height, countLstring + countLetter, { font: '34px Arial', fill: '#fff' });
 
     // words per minute
-    countWstring = 'Words/minute (total): ';
+    countWstring = 'Words/min (ttl): ';
     countWord = 0;
     countWordText = game.add.text((game.world.width/7)*4, game.world.height, countWstring + countWord, { font: '34px Arial', fill: '#fff' });
 
     // crashed words (hit bottom of world)
-    crashCstring = 'Crashed count: ';
+    crashCstring = 'Crashed: ';
     crashCount = 0;
     crashStringText = game.add.text((game.world.width/7)*6, game.world.height, crashCstring + crashCount, { font: '34px Arial', fill: '#fff' });
 
