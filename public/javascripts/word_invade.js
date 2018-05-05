@@ -86,6 +86,10 @@ var wordTimer = 0;
 var wordCounter = 0;
 
 
+var crashCounter = 0;
+var crashCstring = '';
+var crashStringText = '';
+
 function create() {
 
     // Add keyboard events
@@ -94,6 +98,17 @@ function create() {
     game.physics.startSystem(Phaser.Physics.ARCADE);
 
     game.physics.setBoundsToWorld();
+
+    //game.world.setBounds(0,0, window.innerWidth*.9, (window.innerHeight*.9)); // was height-30
+    //game.world.setBounds(0,0, window.innerWidth*.9, window.innerHeight*.9);
+    game.world.setBounds(0,0, game.width, game.height-40);
+
+    console.log('window inner width ' + window.innerWidth + ' window inner height' + window.innerHeight);
+    console.log('window inner width*.9 ' + window.innerWidth*.9 + ' window inner height*.9' + window.innerHeight*.9);
+    console.log('canvas width ' + canvas.width + ' canvas height ' + canvas.height);
+    console.log('game width ' + game.width + ' game height ' + game.height);
+    console.log('world width ' + game.world.width + ' world height ' + game.world.height);
+    console.log('world width bounds' + game.world.bounds.width + ' world height bounds' + game.world.bounds.height);
 
     //  The scrolling starfield background
     starfield = game.add.tileSprite(0, 0, window.innerWidth*.9, window.innerHeight*.9, 'starfield');
@@ -161,17 +176,32 @@ function create() {
     // count aliens
     countString = 'Aliens Remaining: ';
     countA = 0;
-    countText = game.add.text(10, game.world.height-40, countString + countA, { font: '34px Arial', fill: '#fff' });
+    countText = game.add.text(10, game.world.height, countString + countA, { font: '34px Arial', fill: '#fff' });
 
     // letters per minute
-    countLstring = 'Letters/minute: ';
+    countLstring = 'Letters/minute (total): ';
     countLetter = 0;
-    countLetterText = game.add.text((game.world.width/5)*2, game.world.height-40, countLstring + countLetter, { font: '34px Arial', fill: '#fff' });
+    countLetterText = game.add.text((game.world.width/7)*2, game.world.height, countLstring + countLetter, { font: '34px Arial', fill: '#fff' });
 
     // words per minute
-    countWstring = 'Words/minute: ';
+    countWstring = 'Words/minute (total): ';
     countWord = 0;
-    countWordText = game.add.text((game.world.width/5)*3, game.world.height-40, countWstring + countWord, { font: '34px Arial', fill: '#fff' });
+    countWordText = game.add.text((game.world.width/7)*4, game.world.height, countWstring + countWord, { font: '34px Arial', fill: '#fff' });
+
+    // crashed words (hit bottom of world)
+    crashCstring = 'Crashed count: ';
+    crashCount = 0;
+    crashStringText = game.add.text((game.world.width/7)*6, game.world.height, crashCstring + crashCount, { font: '34px Arial', fill: '#fff' });
+
+
+    countLetter = 0;
+    countLetterText.text = countLstring + countLetter + ' (' + letterCounter + ')';
+
+    countWord = 0;
+    countWordText.text = countWstring + countWord + ' (' + wordCounter + ')';
+
+    crashCount = 0;
+    crashStringText.text = crashCstring + crashCount;
 
 
     // moved createAliens() here from above so that lives group exists prior to adding ship to it
@@ -241,7 +271,7 @@ function createAliens () {
 
     //console.log(wordsInArray);
 
-    // this positions the aliens group top left corner
+    // this positions the aliens (words) group top left corner
     aliens.x = (game.world.width/12);
     aliens.y = (game.world.height/8);
 
@@ -249,13 +279,14 @@ function createAliens () {
     var tween = game.add.tween(aliens).to( { x: game.world.width/7 }, 2000, Phaser.Easing.Linear.None, true, 200, 1000, true);
 
     //  When the tween loops it calls descend ::: this onLoop function is broken, known issue on Phaser.io
+    //  descending handled manually
     tween.onLoop.add(descend, this);
 
     // console.log(tween);
     // console.log(tween.current)
 
     // place ship at bottom center of screen
-    wordShip = lives.create(game.world.width / 2, game.world.height - 80, 'ship');
+    wordShip = lives.create(game.world.width / 2, game.world.height - 40, 'ship');
     wordShip.anchor.setTo(0.5, 0.5);
     wordShip.angle = 0;
     wordShip.alpha = 1.0;
@@ -324,8 +355,7 @@ function update() {
         countText.text = countString + countA;
 
 
-        game.world.setBounds(0,0, window.innerWidth*.9, (window.innerHeight*.9)-30);
-        //console.log(window.innerWidth*.9, window.innerHeight*.9);
+        // moved setBounds from here
 
         // loop through the word list (aliens) to see if any have hit the bottom of the screen, if yes, explode them
         //for (var x = 0; x < aliens.length; x++) {
@@ -340,6 +370,9 @@ function update() {
 function explody(alien) {
 
     alien.kill(); // subtracts one from countLiving total and removes from array
+
+    crashCounter++;
+    crashStringText.text = crashCstring + crashCounter;
 
     // //  And create an explosion :)
     // var explosion = explosions.getFirstExists(false);
@@ -387,14 +420,18 @@ function markLetters(stringIn) {
 
     letterCounter++;
 
-    var num = (letterCounter / (game.time.now - letterTimer)) * 6000;
-    countLetter = num.toFixed(2);
+    //var num = (letterCounter / (game.time.now - letterTimer)) * 6000;
+    var num = (letterCounter / ((game.time.now - letterTimer) / 1000) * 60);
+    countLetter = num.toFixed(0);
+
+    //letterTimer = game.time.now;
+
     // console.log('time now ' + game.time.now);
     // console.log('letterTimer ' + letterTimer);
     // console.log('letterCounter ' + letterCounter);
     // console.log(((game.time.now - letterTimer) / letterCounter));
 
-    countLetterText.text = countLstring + countLetter;
+    countLetterText.text = countLstring + countLetter + ' (' + letterCounter + ')';
 
     for (var x = 0; x < wordsInArray.length; x++) {
         
@@ -407,7 +444,7 @@ function markLetters(stringIn) {
                 
                 // shoot a bullet at word and make it explode
                 fireWord(aliens.children[x]);
-                
+
                 // reset variables
                 letter = '';
                 word_in_progress = "";
@@ -470,7 +507,7 @@ function fireWord (target) {
     weapons.bulletKillType = Phaser.Weapon.KILL_WORLD_BOUNDS;
 
     //  The speed at which the bullet is fired
-    weapons.bulletSpeed = 2600;
+    weapons.bulletSpeed = 3600; // was 2600
 
     //  Speed-up the rate of fire, allowing them to shoot 1 bullet every 60ms
     weapons.fireRate = 60;
@@ -482,17 +519,22 @@ function fireWord (target) {
 
     firingTimer = game.time.now + 20;   // was 2000
 
+    wordCounter++;
+    var num = (wordCounter / ((game.time.now - wordTimer) / 1000) * 60);
+    countWord = num.toFixed(0);
+    countWordText.text = countWstring + countWord + ' (' + wordCounter + ')';
+
 }
 
 
 // uncomment to turn on debugging of alien (word) sprites
 function render() {
 
-    for (var i = 0; i < aliens.length; i++)
-    {
-        game.debug.body(aliens.children[i]);
-
-    }
+    // for (var i = 0; i < aliens.length; i++)
+    // {
+    //     game.debug.body(aliens.children[i]);
+    //
+    // }
 
     //game.debug.spriteInfo(weapons, 32, 450);
 
@@ -564,6 +606,11 @@ function collisionOne (alien) {
         //the "click to restart" handler
         game.input.onTap.addOnce(restart,this);
 
+        //enter key also restarts game
+        var keyEnter = game.input.keyboard.addKey(Phaser.Keyboard.ENTER);
+        // keyEnter.onDown.add(console.log('enter key is pressed'));
+        keyEnter.onDown.add(restart, this);
+
     }
 
 }
@@ -597,6 +644,10 @@ function enemyHitsPlayer (player,bullet) {
     //
     //     //the "click to restart" handler
     //     game.input.onTap.addOnce(restart,this);
+    //     //enter key also restarts game
+    //     var keyEnter = game.input.keyboard.addKey(Phaser.Keyboard.ENTER);
+    //     // keyEnter.onDown.add(console.log('enter key is pressed'));
+    //     keyEnter.onDown.add(restart, this);
     // }
 
 }
@@ -670,12 +721,30 @@ function restart () {
 
     //revives the player
     player.revive();
+    player.visible = false;
+
     //hides the text
     stateText.visible = false;
 
     //reset keyEnter to null so that special restart function not called all the time
     keyEnter = game.input.keyboard.removeKey(Phaser.Keyboard.ENTER);
 
+    letterCounter = 0;
+    wordCounter = 0;
+    crashCounter = 0;
+
+    // reset letter and word timers
+    letterTimer = game.time.now;
+    wordTimer = game.time.now;
+
+    countLetter = 0;
+    countLetterText.text = countLstring + countLetter + ' (' + letterCounter + ')';
+
+    countWord = 0;
+    countWordText.text = countWstring + countWord + ' (' + wordCounter + ')';
+
+    crashCount = 0;
+    crashStringText.text = crashCstring + crashCount;
 }
 
 
