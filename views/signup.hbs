@@ -1,0 +1,19 @@
+<h1>Snake Game</h1>
+
+<h2>Sign up to Play the Game</h2>
+
+<ul>
+    {{#each messages}}
+        <li>{{this}}</li>
+    {{/each}}
+</ul>
+
+<form action="/signup" method="POST">
+    Username: <input type="text" name="username" required>
+    <br>
+    Password: <input type="password" name="password" required>
+    <br>
+    <input type="submit" name="signup" value="Sign up">
+</form>
+<p> </p>
+<div class="messages" If you already have an account, you can><a href="/login">sign in here</a>.</div>

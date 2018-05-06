@@ -19,16 +19,28 @@ var game = new Phaser.Game(window.innerWidth*.9, window.innerHeight*.9, Phaser.A
 
 function preload() {
 
-    game.load.image('bullet', 'public/images/bullet.png');
-    game.load.image('enemyBullet', 'public/images/enemy-bullet.png');
-    game.load.spritesheet('invader', 'public/images/invader32x32x4.png', 32, 32);
-    game.load.image('ship', 'public/images/player.png');
-    game.load.spritesheet('kaboom', 'public/images/explode.png', 128, 128);
-    game.load.image('starfield', 'public/images/starfield.png');
-    game.load.image('diamond', 'public/images/diamond.png');
-    game.load.image('background', 'public/images/background2.png');
-    game.load.bitmapFont('desyrel', 'public/images/desyrel.png', 'public/images/desyrel.xml');
-    game.load.bitmapFont('carrier', 'public/images/carrier_command.png', 'public/images/carrier_command.xml');
+    // game.load.image('bullet', 'public/images/bullet.png');
+    // game.load.image('enemyBullet', 'public/images/enemy-bullet.png');
+    // game.load.spritesheet('invader', 'public/images/invader32x32x4.png', 32, 32);
+    // game.load.image('ship', 'public/images/player.png');
+    // game.load.spritesheet('kaboom', 'public/images/explode.png', 128, 128);
+    // game.load.image('starfield', 'public/images/starfield.png');
+    // game.load.image('diamond', 'public/images/diamond.png');
+    // game.load.image('background', 'public/images/background2.png');
+    // game.load.bitmapFont('desyrel', 'public/images/desyrel.png', 'public/images/desyrel.xml');
+    // game.load.bitmapFont('carrier', 'public/images/carrier_command.png', 'public/images/carrier_command.xml');
+
+    game.load.image('bullet', 'images/bullet.png');
+    game.load.image('enemyBullet', 'images/enemy-bullet.png');
+    game.load.spritesheet('invader', 'images/invader32x32x4.png', 32, 32);
+    game.load.image('ship', 'images/player.png');
+    game.load.spritesheet('kaboom', 'images/explode.png', 128, 128);
+    game.load.image('starfield', 'images/starfield.png');
+    game.load.image('diamond', 'images/diamond.png');
+    game.load.image('background', 'images/background2.png');
+    game.load.bitmapFont('desyrel', 'images/desyrel.png', 'images/desyrel.xml');
+    game.load.bitmapFont('carrier', 'images/carrier_command.png', 'images/carrier_command.xml');
+
 
 }
 
@@ -64,11 +76,6 @@ var globalX = 0;
 var emitter;
 var wordShip;
 
-var dropTimer = 0;
-var dropDelay = 1000;       // was 2000
-var dropDistance = 30;   // was 10 distance words (aliens) drop at each tic of the dropTimer
-
-
 var countA = 0;
 var countString = '';
 var countText = '';
@@ -85,10 +92,19 @@ var countWordText = '';
 var wordTimer = 0;
 var wordCounter = 0;
 
-
 var crashCounter = 0;
 var crashCstring = '';
 var crashStringText = '';
+
+var keyEsc;
+
+var level = 1;
+var speed = 100;
+
+var dropTimer = 0;
+var dropDelay = 1500;       // was 2000
+var dropDistance = 10;   // was 10 distance words (aliens) drop at each tic of the dropTimer
+
 
 function create() {
 
@@ -103,12 +119,12 @@ function create() {
     //game.world.setBounds(0,0, window.innerWidth*.9, window.innerHeight*.9);
     game.world.setBounds(0,0, game.width, game.height-40);
 
-    console.log('window inner width ' + window.innerWidth + ' window inner height' + window.innerHeight);
-    console.log('window inner width*.9 ' + window.innerWidth*.9 + ' window inner height*.9' + window.innerHeight*.9);
-    console.log('canvas width ' + canvas.width + ' canvas height ' + canvas.height);
-    console.log('game width ' + game.width + ' game height ' + game.height);
-    console.log('world width ' + game.world.width + ' world height ' + game.world.height);
-    console.log('world width bounds' + game.world.bounds.width + ' world height bounds' + game.world.bounds.height);
+    // console.log('window inner width ' + window.innerWidth + ' window inner height' + window.innerHeight);
+    // console.log('window inner width*.9 ' + window.innerWidth*.9 + ' window inner height*.9' + window.innerHeight*.9);
+    // console.log('canvas width ' + canvas.width + ' canvas height ' + canvas.height);
+    // console.log('game width ' + game.width + ' game height ' + game.height);
+    // console.log('world width ' + game.world.width + ' world height ' + game.world.height);
+    // console.log('world width bounds' + game.world.bounds.width + ' world height bounds' + game.world.bounds.height);
 
     //  The scrolling starfield background
     starfield = game.add.tileSprite(0, 0, window.innerWidth*.9, window.innerHeight*.9, 'starfield');
@@ -233,6 +249,18 @@ function create() {
     letterTimer = game.time.now;
     wordTimer = game.time.now;
 
+    // keyEsc to reset game at any point
+    keyEsc = game.input.keyboard.addKey(Phaser.Keyboard.ESC);
+
+
+    var levelString;
+    levelString = level;
+    $('#gameLevel').html(levelString);
+
+    var speedString;
+    speedString = speed;
+    $('#speed').html(speedString);
+
 }
 
 
@@ -310,6 +338,11 @@ function descend() {
 }
 
 function update() {
+
+    // reset game
+    if (keyEsc.isDown) {
+        restart();
+    }
 
     //  Scroll the background
     starfield.tilePosition.y += 2;
@@ -393,7 +426,12 @@ function explody(alien) {
     if (aliens.countLiving() === 0)
     {
         score += 1000;
-        scoreText.text = scoreString + score;
+        scoreText.text = String(score);
+
+        scoreString = score;
+        console.log('scoreString = ' + scoreString + ' scoreText.text = ' + scoreText.text);
+        $('#scorethis').html(scoreString);
+
 
         enemyBullets.callAll('kill',this);
         stateText.text = " You Won, \n Click to restart";
@@ -415,6 +453,7 @@ function markLetters(stringIn) {
 
     word_in_progress = word_in_progress.concat(stringIn);
 
+    //print text at top of screen
     letter = letter.concat(stringIn);
     typedText.text = typedString + letter;
 
@@ -432,6 +471,8 @@ function markLetters(stringIn) {
     // console.log(((game.time.now - letterTimer) / letterCounter));
 
     countLetterText.text = countLstring + countLetter + ' (' + letterCounter + ')';
+
+    //console.log('wordsInArray : ' + wordsInArray );
 
     for (var x = 0; x < wordsInArray.length; x++) {
         
@@ -519,6 +560,7 @@ function fireWord (target) {
 
     firingTimer = game.time.now + 20;   // was 2000
 
+    // recalculate words per minute
     wordCounter++;
     var num = (wordCounter / ((game.time.now - wordTimer) / 1000) * 60);
     countWord = num.toFixed(0);
@@ -549,7 +591,12 @@ function collisionHandler (bullet, alien) {
 
     //  Increase the score
     score += 20;
-    scoreText.text = scoreString + score;
+    scoreText.text = String(score);
+
+    // html score
+    scoreString = score;
+    $('#scorethis').html(scoreString);
+
 
     //  And create an explosion :)
     var explosion = explosions.getFirstExists(false);
@@ -561,7 +608,12 @@ function collisionHandler (bullet, alien) {
     if (aliens.countLiving() === 0)
     {
         score += 1000;
-        scoreText.text = scoreString + score;
+        scoreText.text = String(score);
+
+        scoreString = score;
+        console.log('scoreString = ' + scoreString  + ' scoreText.text = ' + scoreText.text);
+        $('#scorethis').html(scoreString);
+
 
         enemyBullets.callAll('kill',this);
         stateText.text = " You Won, \n Click to restart";
@@ -587,7 +639,12 @@ function collisionOne (alien) {
 
     //  Increase the score
     score += 20;
-    scoreText.text = scoreString + score;
+    scoreText.text = String(score);
+
+    scoreString = score;
+    console.log('scoreString = ' + scoreString  + ' scoreText.text = ' + scoreText.text);
+    $('#scorethis').html(scoreString);
+
 
     //  And create an explosion :)
     var explosion = explosions.getFirstExists(false);
@@ -597,7 +654,12 @@ function collisionOne (alien) {
     if (aliens.countLiving() === 0)
     {
         score += 1000;
-        scoreText.text = scoreString + score;
+        scoreText.text = String(score);
+
+        scoreString = score;
+        console.log('scoreString = ' + scoreString  + ' scoreText.text = ' + scoreText.text);
+        $('#scorethis').html(scoreString);
+
 
         enemyBullets.callAll('kill',this);
         stateText.text = " You Won, \n Click to restart";
@@ -745,6 +807,21 @@ function restart () {
 
     crashCount = 0;
     crashStringText.text = crashCstring + crashCount;
+
+
+    level++;
+    var levelString;
+    levelString = level;
+    $('#gameLevel').html(levelString);
+
+    speed+=100;
+    var speedString;
+    speedString = speed;
+    $('#speed').html(speedString);
+
+    dropDelay-=100;       // decrease to speed up words moving down the screen
+    dropDistance+=5;   //  increase distance words (aliens) drop at each tic of the dropTimer
+
 }
 
 
@@ -862,6 +939,7 @@ function onKeyPress(e) {
     if (myKey === 39) {
         markLetters("'");
     }
+
 
     // enter key
     if (myKey === 13) {

@@ -1,11 +1,16 @@
 body {
-  padding: 50px;
-  font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
+  padding: 1px;             /* was 50 */
+  font: 24px "Lucida Grande", Helvetica, Arial, sans-serif;  /* was 24 */
 }
 
 a {
   color: #00B7FF;
 }
+
+p {
+  text-align: center;
+}
+
 /* https://stackoverflow.com/questions/5127937/how-to-center-canvas-in-html5 */
 canvas {
   padding: 0;

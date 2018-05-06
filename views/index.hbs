@@ -13,11 +13,40 @@
 </head>
 <body>
 
+<script>
+    // Clara's code to receive user data from the server (where the DB info resides)
+    var userJSON = '{{{user}}}';
+    var logsJSON = '{{{logs}}}';
+
+    console.log('index.hbs userJSON before converting to object = ' + userJSON);
+
+    var user = JSON.parse(userJSON);
+    var logs = JSON.parse(logsJSON);
+
+    for (item in user) {
+        console.log('index.hbs user item = ' + item + ' user[item] = ' + user[item]);
+    }
+    for (item in logs) {
+        console.log('index.hbs logs item = ' + item + ' logs[item] = ' + logs[item]);
+    }
+
+</script>
+
+<p class="numbers"><span id="huser" class="numbers"></span><span id="score" class="numbers"> Score: </span>
+    <span id="scorethis" class="numbers">000</span>
+    <span id="levelID" class="numbers">   Level: </span><span id="gameLevel" class="numbers">0</span>
+    <span id="livesID" class="numbers">   Lives: </span><span id="lives" class="numbers"></span>
+    <span id="speedID" class="numbers">   Speed: </span><span id="speed" class="numbers"></span>
+</p>
+
 <div id="container">
     <canvas id="canvas" ></canvas>
 </div>
 
-<script src="/public/javascripts/word_invade.js"></script>
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+<script src="/javascripts/gameSocket.js"></script>
+<script src="/javascripts/word_invade.js"></script>
 
 
 </body>

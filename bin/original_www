@@ -4,9 +4,8 @@
  * Module dependencies.
  */
 
-var appconfig = require('../app')
-var app = appconfig.app;
-var debug = require('debug')('socket-game:server');
+var app = require('../app'); // was ../app
+var debug = require('debug')('word-invader:server');
 var http = require('http');
 
 /**
@@ -15,13 +14,13 @@ var http = require('http');
 
 var port = normalizePort(process.env.PORT || '3000');
 app.set('port', port);
+//app.listen('port', port);
 
 /**
  * Create HTTP server.
  */
 
-//var server = http.createServer(app);
-var server = appconfig.server;
+var server = http.createServer(app);
 
 /**
  * Listen on provided port, on all network interfaces.
