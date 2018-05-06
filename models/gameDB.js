@@ -9,7 +9,9 @@ var userSchema = new Schema( {
         password: String
     },
         highScore : { type: Number },
-        highDate : { type: Date }
+        highDate : { type: Date },
+        highLevel : { type: Number }
+
 });
 
 

@@ -809,6 +809,11 @@ function restart () {
     crashStringText.text = crashCstring + crashCount;
 
 
+    HighScore = score;
+    HighLevel = level;
+    updateDatabase(HighScore, HighLevel)
+
+
     level++;
     var levelString;
     levelString = level;
@@ -1168,3 +1173,114 @@ var words = [
     "yet","you","you'd","you'll","you're","you've","young","younger","your","yourself",
     "youth","zero","zoo"
 ];
+
+// code copied from last Fall's WebDev final project
+function updateDatabase (HighScore, HighLevel) {
+    console.log(' in updateDatabase logs._id = ' + logs[0]._id);
+    console.log(' in updateDatabase user.local = ' + user.local);
+    console.log(' in updateDatabase highScore = ' + HighScore);
+    console.log(' in updateDatabase highlevel = ' + HighLevel);
+
+    // this first ajax method updates the database with the new high score for the player
+    $.ajax({
+        method: "POST",
+        url: "/update",
+        //data: { _id: logs[0]._id, highScore: HighScore, highDate: Date.now() }
+        data: { _id: logs[0]._id, highScore: HighScore, highDate: new Date(), highLevel: HighLevel },
+    }).done (function(msg) {
+        console.log('ajax success');
+
+        //console.log('ajax success' + msg);
+        //for (item in data) {
+        //    console.log('snakegame item = ' + item + ' data[item] = ' + data[item]);
+        // }
+
+        // ajax method embedded within successful completion of first ajax update call to database
+        // because we need to wait until the database has a chance to update before proceeding to next
+        // database operation. This is a prime example of the useage of callback logic structure.
+
+        console.log('about to call /reload, username = ' + logs[0].local.username);
+        $.ajax({
+            method: "POST",
+            url: "/reload",
+            data: { username: logs[0].local.username }
+        }).done (function(msg) {
+
+            // all these variable manipulations done here within the ajax method to do the asynchronous delay
+            // in response back from the database. javascript will zoom ahead of the db returning data thus
+            // making the html updates meaningless. putting the html updates here forces the code to update within
+            // the callback.
+            console.log('ajax second success');
+            //console.log('ajax second success' + msg);
+            //for (item in msg) {
+            //    console.log('snakegame msg = ' + item + ' msg[item] = ' + msg[item]);
+            //}
+            passed_user = JSON.parse(msg.user);
+            passed_logs = JSON.parse(msg.logs);  // logs is returned as an object within an array
+            var rv = {};
+            for (var i = 0; i < passed_logs.length; ++i) {
+                rv[i] = passed_logs[i];
+            }
+
+            /*
+            console.log('');
+            console.log('passed_user = ' + JSON.stringify(passed_user));
+            console.log('passed_logs = ' + JSON.stringify(passed_logs));
+            */
+
+            user.highScore = passed_user.highScore;
+            user.highDate = passed_user.highDate;
+            user.local.username = passed_user.local.username;
+            logs[0].highScore = passed_logs[0].highScore;
+            logs[0].highDate = passed_logs[0].highDate;
+            logs[0].local.username = passed_logs[0].local.username;
+
+            /*
+            console.log('')
+            console.log('passed_logs.highScore = ' + logs[0].highScore);
+            console.log('passed_logs.highDate = ' + logs[0].highDate);
+            console.log('');
+            console.log('user.highScore = ' + user.highScore);
+            console.log('user.highDate = ' + user.highDate);
+            console.log('logs[0].highScore = ' + logs[0].highScore);
+            console.log('logs[0].highDate = ' + logs[0].highDate);
+            */
+
+            if (user.highDate === null || user.highDate === undefined) {
+                user.highDate = new Date().toDateString();
+            }
+            if (logs[0].highDate === null || logs[0].highDate === undefined) {
+                logs[0].highDate = new Date().toDateString();
+            }
+
+            // $('#highestscore').html(user.highScore);
+            // $('#hDate').html(user.highDate.substr(0, 10));
+            // $('#hUser').html(user.local.username);
+            //
+            // $('#highestuserscore').html(logs[0].highScore);
+            // $('#hdate').html(logs[0].highDate.substr(0, 10));
+            // $('#huser').html(logs[0].local.username);
+            // $('#huser1').html(logs[0].local.username);
+
+        }).fail(function (xhr,status,error) {
+            console.log("ajax Second Post error:");
+            console.log('xhr = ' + JSON.stringify(xhr));
+            console.log('status = ' + status);
+            console.log('error = ' + error);
+        });
+
+    }).fail(function (xhr,status,error) {
+        console.log("ajax Post error:");
+        console.log('xhr = ' + JSON.stringify(xhr));
+        console.log('status = ' + status);
+        console.log('error = ' + error);
+    });
+
+    var passed_user = {};
+    var passed_logs = {};
+
+    // this ajax method gets the new highest score on the database as well as the player's highest score
+
+
+    console.log('leaving updateDatabase');
+}

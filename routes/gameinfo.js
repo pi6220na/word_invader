@@ -96,6 +96,7 @@ router.post('/update', function(req, res, next) {
     console.log('id = ' + req.body._id);
     console.log('highScore = ' + req.body.highScore);
     console.log('highDate = ' + req.body.highDate);
+    console.log('highLevel = ' + req.body.highLevel);
 
 
     var hold_highScore = req.body.highScore;
@@ -118,7 +119,7 @@ router.post('/update', function(req, res, next) {
                 if (hold_highScore > req.user.highScore || req.user.highScore === undefined) {
 
                     //Logic to update the item                    //username:req.body.username,
-                    User.update({ _id: ObjectID(req.body._id) }, { $set : {  highScore: req.body.highScore, highDate: req.body.highDate }})
+                    User.update({ _id: ObjectID(req.body._id) }, { $set : {  highScore: req.body.highScore, highDate: req.body.highDate, highLevel: req.body.highLevel }})
                         .then((result) => {
                             /*
                             for (item in result) {
