@@ -4,7 +4,7 @@
  * Module dependencies.
  */
 
-var appconfig = require('./app')
+var appconfig = require('/app')
 var app = appconfig.app;
 var debug = require('debug')('socket-game:server');
 var http = require('http');
