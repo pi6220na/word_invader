@@ -30,6 +30,8 @@ var index = require('./routes/gameinfo');
 //var index = require('./routes/index');
 
 var mongo_url = process.env.MONGO_URL;
+console.log('mongo_url = ' + mongo_url);
+
 //var mongo_url = "mongodb://dbUser:456def@ds129946.mlab.com:29946/snake";   //?authSource=admin
 //var mongo_url = "mongodb://<dbuser>:<dbpassword>@ds117250.mlab.com:17250/wordinvaders";
 //var mongo_url = "mongodb://dbUser:456def@127.0.0.1:27017/invade?authSource=admin";
