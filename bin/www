@@ -4,8 +4,10 @@
  * Module dependencies.
  */
 
-var appconfig = require('app')
-var app = appconfig.app;
+//var appconfig = require('app')
+//var app = appconfig.app;
+
+var app = require('../app')
 var debug = require('debug')('socket-game:server');
 var http = require('http');
 
@@ -21,7 +23,9 @@ app.set('port', port);
  */
 
 //var server = http.createServer(app);
-var server = appconfig.server;
+//var server = appconfig.server;
+
+var server = app.server;
 
 /**
  * Listen on provided port, on all network interfaces.

@@ -1,1 +1,1 @@
-web: node bin/original_www
+web: node bin/www
