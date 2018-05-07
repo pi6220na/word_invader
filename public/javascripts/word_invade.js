@@ -19,6 +19,9 @@ var game = new Phaser.Game(window.innerWidth*.9, window.innerHeight*.9, Phaser.A
 
 function preload() {
 
+    getDBInfo();
+
+
     // game.load.image('bullet', 'public/images/bullet.png');
     // game.load.image('enemyBullet', 'public/images/enemy-bullet.png');
     // game.load.spritesheet('invader', 'public/images/invader32x32x4.png', 32, 32);
@@ -43,6 +46,68 @@ function preload() {
 
 
 }
+
+function getDBInfo() {
+    // ajax method gets user info from the database
+
+    console.log('about to call /reload, username = ' + logs[0].local.username);
+    // $.ajax({
+    //     method: "POST",
+    //     url: "/reload",
+    //     data: { username: logs[0].local.username }
+    // }).done (function(msg) {
+    //
+    //     // all these variable manipulations done here within the ajax method to do the asynchronous delay
+    //     // in response back from the database. javascript will zoom ahead of the db returning data thus
+    //     // making the html updates meaningless. putting the html updates here forces the code to update within
+    //     // the callback.
+    //     console.log('ajax second success');
+    //     //console.log('ajax second success' + msg);
+    //     //for (item in msg) {
+    //     //    console.log('snakegame msg = ' + item + ' msg[item] = ' + msg[item]);
+    //     //}
+    //     passed_user = JSON.parse(msg.user);
+    //     passed_logs = JSON.parse(msg.logs);  // logs is returned as an object within an array
+    //     var rv = {};
+    //     for (var i = 0; i < passed_logs.length; ++i) {
+    //         rv[i] = passed_logs[i];
+    //     }
+    //
+    //     /*
+    //     console.log('');
+    //     console.log('passed_user = ' + JSON.stringify(passed_user));
+    //     console.log('passed_logs = ' + JSON.stringify(passed_logs));
+    //     */
+    //
+    //
+    // }).fail(function (xhr,status,error) {
+    //     console.log("ajax Second Post error:");
+    //     console.log('xhr = ' + JSON.stringify(xhr));
+    //     console.log('status = ' + status);
+    //     console.log('error = ' + error);
+    // });
+
+    // user.highScore = passed_user.highScore;
+    // user.highDate = passed_user.highDate;
+    // user.local.username = passed_user.local.username;
+    // user.highLevel = passed_user.highLevel;
+    // logs[0].highScore = passed_logs[0].highScore;
+    // logs[0].highDate = passed_logs[0].highDate;
+    // logs[0].local.username = passed_logs[0].local.username;
+    // logs[0].highLevel = passed_logs[0].highLevel;
+    //
+    // console.log('user.highScore = ' + user.highScore);
+    // console.log('user.highDate = ' + user.highDate);
+    // console.log('user.local.username = ' + user.local.username);
+    // console.log('user.highLevel = ' + user.highLevel);
+
+    console.log('logs[0].local.username = ' + logs[0].local.username);
+    console.log('logs[0].highScore = ' + logs[0].highScore);
+    console.log('logs[0].highDate = ' + logs[0].highDate);
+    console.log('logs[0].highLevel = ' + logs[0].highLevel);
+
+}
+
 
 var player;
 var aliens;
@@ -261,6 +326,16 @@ function create() {
     speedString = speed;
     $('#speed').html(speedString);
 
+
+    $('#huser').html(logs[0].local.username);
+
+    $('#dbHighScore').html(logs[0].highScore);
+
+    $('#dbHighLevel').html(logs[0].highLevel);
+
+    $('#dbHighDate').html(logs[0].highDate.substr(0, 10));
+
+
 }
 
 
@@ -434,7 +509,7 @@ function explody(alien) {
 
 
         enemyBullets.callAll('kill',this);
-        stateText.text = " You Won, \n Click to restart";
+        stateText.text = "      Level Complete, \n Click/enter for next Level";
         stateText.visible = true;
 
         //the "click to restart" handler
@@ -616,7 +691,7 @@ function collisionHandler (bullet, alien) {
 
 
         enemyBullets.callAll('kill',this);
-        stateText.text = " You Won, \n Click to restart";
+        stateText.text = "      Level Complete, \n Click/enter for next Level";
         stateText.visible = true;
 
         //the "click to restart" handler
@@ -662,7 +737,7 @@ function collisionOne (alien) {
 
 
         enemyBullets.callAll('kill',this);
-        stateText.text = " You Won, \n Click to restart";
+        stateText.text = "      Level Complete, \n Click/enter for next Level";
         stateText.visible = true;
 
         //the "click to restart" handler
@@ -701,7 +776,7 @@ function enemyHitsPlayer (player,bullet) {
     //     player.kill();
     //     enemyBullets.callAll('kill');
     //
-    //     stateText.text=" GAME OVER \n Click to restart";
+    //     stateText.text = "      Level Complete, \n Click/enter for next Level";
     //     stateText.visible = true;
     //
     //     //the "click to restart" handler
@@ -944,7 +1019,9 @@ function onKeyPress(e) {
     if (myKey === 39) {
         markLetters("'");
     }
-
+    if (myKey === 46) {
+        markLetters(".");
+    }
 
     // enter key
     if (myKey === 13) {
@@ -1231,9 +1308,11 @@ function updateDatabase (HighScore, HighLevel) {
             user.highScore = passed_user.highScore;
             user.highDate = passed_user.highDate;
             user.local.username = passed_user.local.username;
+            logs[0].local.username = passed_logs[0].local.username;
             logs[0].highScore = passed_logs[0].highScore;
             logs[0].highDate = passed_logs[0].highDate;
-            logs[0].local.username = passed_logs[0].local.username;
+            logs[0].highLevel = passed_logs[0].highLevel;
+
 
             /*
             console.log('')

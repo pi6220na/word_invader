@@ -32,16 +32,23 @@
 
 </script>
 
-<p class="numbers"><span id="huser" class="numbers"></span><span id="score" class="numbers"> Score: </span>
-    <span id="scorethis" class="numbers">000</span>
+<p class="numbers">
+    <span id="screenUser" class="numbers"> User: </span><span id="huser" class="numbers"></span>
+    <span id="score" class="numbers">     Score: </span><span id="scorethis" class="numbers">000</span>
     <span id="levelID" class="numbers">   Level: </span><span id="gameLevel" class="numbers">0</span>
-    <span id="livesID" class="numbers">   Lives: </span><span id="lives" class="numbers"></span>
-    <span id="speedID" class="numbers">   Speed: </span><span id="speed" class="numbers"></span>
+    <span id="livesID" class="numbers">   Lives: </span><span id="lives" class="numbers">0</span>
+    <span id="speedID" class="numbers">   Speed: </span><span id="speed" class="numbers">0</span>
 </p>
 
 <div id="container">
     <canvas id="canvas" ></canvas>
 </div>
+
+<p class="inner">
+    <span id="dbscore" class="numbers">   Database High Score: </span><span id="dbHighScore" class="numbers">0</span>
+    <span id="dblevel" class="numbers">   Level: </span><span id="dbHighLevel" class="numbers">0</span>
+    <span id="dbdate" class="numbers">   Date: </span><span id="dbHighDate" class="numbers"></span>
+</p>
 
 
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
