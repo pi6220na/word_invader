@@ -42,3 +42,5 @@ supporting documentation. Kevin Atkinson makes no representations
 about the suitability of this array for any purpose. It is provided
 "as is" without express or implied warranty.
 
+Overall, this project is:
+![Double Facepalm](/images/double.png)
