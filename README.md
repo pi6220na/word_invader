@@ -12,6 +12,8 @@ The user sign-on, date/time stamp, high score, and level completed information i
 ## Game Play
 The game is played by typing the moving words completely before they hit the bottom of the screen. Mispelled words can be re-typed by hitting the enter key. The ESC key can be pressed at any time to advance to the next level. When all the words are typed, the user advances to the next level automatically. The speed that the words drop down the screen is increased with each level bump.
 
+The original Space Invaders game is shown on another page, accessed by link at bottom of main page.
+
 ### Known Bugs
 - A possible Phaser.io bug - occasionally words will be typed correctly, shot at, but not exploded. The missle seems to miss the word.
 
