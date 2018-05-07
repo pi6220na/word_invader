@@ -43,4 +43,4 @@ about the suitability of this array for any purpose. It is provided
 "as is" without express or implied warranty.
 
 Overall, this project is:
-![Double Facepalm](/images/double.png)
+![Double Facepalm](public/images/double.png)
