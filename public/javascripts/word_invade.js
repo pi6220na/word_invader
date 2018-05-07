@@ -1,7 +1,9 @@
+// based on space invaders game from examples on phaser.io
+// MIT Licence
+// heavily modified by J. Wolfe 5/7/2018 MCTC Capstone Final Project
 
 var game = new Phaser.Game(window.innerWidth*.9, window.innerHeight*.9, Phaser.AUTO, 'word_invade', { preload: preload, create: create, update: update, render: render });
 
-// window.innerWidth*.9, window.innerHeight*.9
 
 // var canvas = document.getElementById('myCanvas');
 // canvas.width = window.innerWidth * .8;
@@ -10,28 +12,9 @@ var game = new Phaser.Game(window.innerWidth*.9, window.innerHeight*.9, Phaser.A
 // canvas.width = rectangle1.clientWidth * .9;
 // canvas.height = rectangle1.clientHeight * .9;
 
-//
-// // // start working with canvas - paint black to make visible
-// ctx = canvas.getContext('2d');
-// ctx.fillStyle = "#000";
-// ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-
+// This runs once at beginning when loaded
 function preload() {
-
-    getDBInfo();
-
-
-    // game.load.image('bullet', 'public/images/bullet.png');
-    // game.load.image('enemyBullet', 'public/images/enemy-bullet.png');
-    // game.load.spritesheet('invader', 'public/images/invader32x32x4.png', 32, 32);
-    // game.load.image('ship', 'public/images/player.png');
-    // game.load.spritesheet('kaboom', 'public/images/explode.png', 128, 128);
-    // game.load.image('starfield', 'public/images/starfield.png');
-    // game.load.image('diamond', 'public/images/diamond.png');
-    // game.load.image('background', 'public/images/background2.png');
-    // game.load.bitmapFont('desyrel', 'public/images/desyrel.png', 'public/images/desyrel.xml');
-    // game.load.bitmapFont('carrier', 'public/images/carrier_command.png', 'public/images/carrier_command.xml');
 
     game.load.image('bullet', 'images/bullet.png');
     game.load.image('enemyBullet', 'images/enemy-bullet.png');
@@ -44,71 +27,9 @@ function preload() {
     game.load.bitmapFont('desyrel', 'images/desyrel.png', 'images/desyrel.xml');
     game.load.bitmapFont('carrier', 'images/carrier_command.png', 'images/carrier_command.xml');
 
-
 }
 
-function getDBInfo() {
-    // ajax method gets user info from the database
-
-    console.log('about to call /reload, username = ' + logs[0].local.username);
-    // $.ajax({
-    //     method: "POST",
-    //     url: "/reload",
-    //     data: { username: logs[0].local.username }
-    // }).done (function(msg) {
-    //
-    //     // all these variable manipulations done here within the ajax method to do the asynchronous delay
-    //     // in response back from the database. javascript will zoom ahead of the db returning data thus
-    //     // making the html updates meaningless. putting the html updates here forces the code to update within
-    //     // the callback.
-    //     console.log('ajax second success');
-    //     //console.log('ajax second success' + msg);
-    //     //for (item in msg) {
-    //     //    console.log('snakegame msg = ' + item + ' msg[item] = ' + msg[item]);
-    //     //}
-    //     passed_user = JSON.parse(msg.user);
-    //     passed_logs = JSON.parse(msg.logs);  // logs is returned as an object within an array
-    //     var rv = {};
-    //     for (var i = 0; i < passed_logs.length; ++i) {
-    //         rv[i] = passed_logs[i];
-    //     }
-    //
-    //     /*
-    //     console.log('');
-    //     console.log('passed_user = ' + JSON.stringify(passed_user));
-    //     console.log('passed_logs = ' + JSON.stringify(passed_logs));
-    //     */
-    //
-    //
-    // }).fail(function (xhr,status,error) {
-    //     console.log("ajax Second Post error:");
-    //     console.log('xhr = ' + JSON.stringify(xhr));
-    //     console.log('status = ' + status);
-    //     console.log('error = ' + error);
-    // });
-
-    // user.highScore = passed_user.highScore;
-    // user.highDate = passed_user.highDate;
-    // user.local.username = passed_user.local.username;
-    // user.highLevel = passed_user.highLevel;
-    // logs[0].highScore = passed_logs[0].highScore;
-    // logs[0].highDate = passed_logs[0].highDate;
-    // logs[0].local.username = passed_logs[0].local.username;
-    // logs[0].highLevel = passed_logs[0].highLevel;
-    //
-    // console.log('user.highScore = ' + user.highScore);
-    // console.log('user.highDate = ' + user.highDate);
-    // console.log('user.local.username = ' + user.local.username);
-    // console.log('user.highLevel = ' + user.highLevel);
-
-    console.log('logs[0].local.username = ' + logs[0].local.username);
-    console.log('logs[0].highScore = ' + logs[0].highScore);
-    console.log('logs[0].highDate = ' + logs[0].highDate);
-    console.log('logs[0].highLevel = ' + logs[0].highLevel);
-
-}
-
-
+// Game Globals
 var player;
 var aliens;
 var bullets;
@@ -171,6 +92,7 @@ var dropDelay = 1500;       // was 2000
 var dropDistance = 10;   // was 10 distance words (aliens) drop at each tic of the dropTimer
 
 
+// initializes various game objects and builds data structures as needed
 function create() {
 
     // Add keyboard events
@@ -274,7 +196,7 @@ function create() {
     crashCount = 0;
     crashStringText = game.add.text((game.world.width/7)*6, game.world.height, crashCstring + crashCount, { font: '34px Arial', fill: '#fff' });
 
-
+    // set canvas scores to zero
     countLetter = 0;
     countLetterText.text = countLstring + countLetter + ' (' + letterCounter + ')';
 
@@ -318,6 +240,8 @@ function create() {
     keyEsc = game.input.keyboard.addKey(Phaser.Keyboard.ESC);
 
 
+    // populate html fields using jquery
+
     var levelString;
     levelString = level;
     $('#gameLevel').html(levelString);
@@ -325,7 +249,6 @@ function create() {
     var speedString;
     speedString = speed;
     $('#speed').html(speedString);
-
 
     $('#huser').html(logs[0].local.username);
 
@@ -339,8 +262,9 @@ function create() {
 }
 
 
+// this function generates a list of 24 words (sprites).
 function createAliens () {
-    // this function generates a list of 24 words (sprites).
+
     var index = 0;
 
     for (var y = 0; y < 4; y++)
@@ -398,6 +322,7 @@ function createAliens () {
 
 }
 
+// original function not used
 function setupInvader (invader) {
 
     invader.anchor.x = 0.5;
@@ -412,6 +337,7 @@ function descend() {
 
 }
 
+// this function cycles every game loop (60 times a second ? )
 function update() {
 
     // reset game
@@ -475,6 +401,7 @@ function update() {
     }
 }
 
+// this function blows up an alien (word) and restarts if no more words
 function explody(alien) {
 
     alien.kill(); // subtracts one from countLiving total and removes from array
@@ -524,6 +451,8 @@ function explody(alien) {
 
 }
 
+// this function gets a letter and matches it to all words (aliens). If alien word completely spelled then
+// the alien (word) is exploded and the word is removed from the word array.
 function markLetters(stringIn) {
 
     word_in_progress = word_in_progress.concat(stringIn);
@@ -579,6 +508,9 @@ function markLetters(stringIn) {
 
 }
 
+
+// when typing letters many words can match (usually just the first one or two letters)
+// this function resets all the words back to default color in preparation for the next letter to be typed
 function resetColors() {
     // loop through all words in the array and reset color back to original color
     for (var x = 0; x < wordsInArray.length; x++) {
@@ -599,8 +531,9 @@ function resetColors() {
     }
 }
 
-function changeLetters(word_in_progress, x) {
+
 // change color of letter(s) of word to indicate that it has been typed by the user
+function changeLetters(word_in_progress, x) {
 
     // extract word from array
     var myWord = aliens.children[x];
@@ -615,6 +548,8 @@ function changeLetters(word_in_progress, x) {
 
 }
 
+
+// this function shoots down an alien (word)
 function fireWord (target) {
 
     // shoot a bullet at the target word and make it explode
@@ -658,6 +593,8 @@ function render() {
 
 }
 
+
+// not used yet
 function collisionHandler (bullet, alien) {
 
     //  When a bullet hits an alien we kill them both
@@ -706,6 +643,8 @@ function collisionHandler (bullet, alien) {
 
 }
 
+
+// not used yet
 function collisionOne (alien) {
 
     //  When a bullet hits an alien we kill them both
@@ -753,7 +692,7 @@ function collisionOne (alien) {
 }
 
 
-
+// not used yet
 function enemyHitsPlayer (player,bullet) {
 
     bullet.kill();
@@ -789,6 +728,7 @@ function enemyHitsPlayer (player,bullet) {
 
 }
 
+// not used yet
 function enemyFires () {
 
     //  Grab the first bullet we can from the pool
@@ -819,6 +759,8 @@ function enemyFires () {
 
 }
 
+
+// not used yet
 function fireBullet () {
 
     //  To avoid them being allowed to fire too fast we set a time limit
@@ -838,6 +780,7 @@ function fireBullet () {
 
 }
 
+// not used yet
 function resetBullet (bullet) {
 
     //  Called if the bullet goes out of the screen
@@ -845,6 +788,8 @@ function resetBullet (bullet) {
 
 }
 
+
+// resets game for next level
 function restart () {
 
     //  A new level starts
@@ -899,6 +844,7 @@ function restart () {
     speedString = speed;
     $('#speed').html(speedString);
 
+    // bump up the speed
     dropDelay-=100;       // decrease to speed up words moving down the screen
     dropDistance+=5;   //  increase distance words (aliens) drop at each tic of the dropTimer
 
@@ -1034,6 +980,21 @@ function onKeyPress(e) {
 
 }
 
+// common English words from http://wordlist.aspell.net/hunspell-readme/
+
+// The collective work is Copyright 2000-2016 by Kevin Atkinson as well
+// as any of the copyrights mentioned below:
+//
+//     Copyright 2000-2016 by Kevin Atkinson
+//
+// Permission to use, copy, modify, distribute and sell these word
+// lists, the associated scripts, the output created from the scripts,
+//     and its documentation for any purpose is hereby granted without fee,
+//     provided that the above copyright notice appears in all copies and
+// that both that copyright notice and this permission notice appear in
+// supporting documentation. Kevin Atkinson makes no representations
+// about the suitability of this array for any purpose. It is provided
+// "as is" without express or implied warranty.
 
 var words = [
     "Africa","Alaska","Alice","America","Andy","Ann","April","Asia","Atlantic","August",
@@ -1250,6 +1211,7 @@ var words = [
     "yet","you","you'd","you'll","you're","you've","young","younger","your","yourself",
     "youth","zero","zoo"
 ];
+
 
 // code copied from last Fall's WebDev final project
 function updateDatabase (HighScore, HighLevel) {

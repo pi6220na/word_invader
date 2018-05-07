@@ -46,6 +46,12 @@ router.get('/signup', function(req, res, next){
 });
 
 
+/* GET original page */
+router.get('/original', function(req, res, next){
+    res.render('original')
+});
+
+
 /* POST signup - this is called by clicking signup button on form
  *  * Call passport.authenticate with these arguments:
  *    what method to use - in this case, local-signup, defined in /config/passport.js
