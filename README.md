@@ -3,7 +3,7 @@
 ### May 8th, 2018
 
 ## Overview
-This is a simple word game implemented on Phaser.io game engine and HTML/CSS/Javascript running on Node Express with MONGO Database. It is based on an example Phaser.io game Space Invaders. MIT Licence granted.
+This is a simple word game implemented on [Phaser.io](http://phaser.io) game engine and HTML/CSS/Javascript running on Node Express with MONGO Database. It is based on an example Phaser.io game Space Invaders. [MIT Licence granted](https://phaser.io/download/license).
 
 This is game first does a simple sign-on validation: user name, password (hash) is saved in a users/password collection.
 
