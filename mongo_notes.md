@@ -22,9 +22,9 @@ from a command prompt:
 ## Mongo Database Setup
 
 - use admin
-- db.auth('myUserAdmin','123abc')
 - db.createUser({user:"myUserAdmin",pwd:"abc123",roles:[{role:"userAdminAnyDatabase",db:"admin"}]})
 - db.createUser({user:"dbUser",pwd:"456def",roles:[{role:"readWrite",db:"invade"}]})
+- db.auth('myUserAdmin','123abc')
 - use admin
 - switched to db admin
 - show dbs
