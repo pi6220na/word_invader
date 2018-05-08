@@ -356,33 +356,33 @@ function update() {
 
     if (player.alive)
     {
-        //  Reset the player, then check for movement keys
-        player.body.velocity.setTo(0, 0);
-
-        if (cursors.left.isDown)
-        {
-            player.body.velocity.x = -200;
-        }
-        else if (cursors.right.isDown)
-        {
-            player.body.velocity.x = 200;
-        }
-
-        //  Firing?
-        if (fireButton.isDown)
-        {
-            fireBullet();
-        }
-
-        // if (game.time.now > firingTimer)
+        // //  Reset the player, then check for movement keys
+        // player.body.velocity.setTo(0, 0);
+        //
+        // if (cursors.left.isDown)
         // {
-        //     enemyFires();
+        //     player.body.velocity.x = -200;
         // }
-
-        //  Run collision                           aliens.children[globalX]
-
-        game.physics.arcade.overlap(weapons.bullets, aliens.children[globalX], collisionHandler, null, this);
-        game.physics.arcade.overlap(enemyBullets, player, enemyHitsPlayer, null, this);
+        // else if (cursors.right.isDown)
+        // {
+        //     player.body.velocity.x = 200;
+        // }
+        //
+        // //  Firing?
+        // if (fireButton.isDown)
+        // {
+        //     fireBullet();
+        // }
+        //
+        // // if (game.time.now > firingTimer)
+        // // {
+        // //     enemyFires();
+        // // }
+        //
+        // //  Run collision                           aliens.children[globalX]
+        //
+        // game.physics.arcade.overlap(weapons.bullets, aliens.children[globalX], collisionHandler, null, this);
+        // game.physics.arcade.overlap(enemyBullets, player, enemyHitsPlayer, null, this);
 
         //  The count of aliens
         countString = 'Aliens Remaining: ';
