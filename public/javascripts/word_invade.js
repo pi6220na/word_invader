@@ -1,9 +1,9 @@
-// based on space invaders game from examples on phaser.io
-// MIT Licence
+// This game is based on space invaders from examples on phaser.io
+// MIT Licenced
 // heavily modified by J. Wolfe 5/7/2018 MCTC Capstone Final Project
 // built on top of framework from WebDev Final Project (Snake Game by Jeremy)
 
-var game = new Phaser.Game(window.innerWidth*.9, window.innerHeight*.9, Phaser.AUTO, 'word_invade', { preload: preload, create: create, update: update, render: render });
+var game = new Phaser.Game(window.innerWidth*.9, window.innerHeight*.9, Phaser.AUTO, 'container', { preload: preload, create: create, update: update, render: render });
 
 
 // var canvas = document.getElementById('myCanvas');
