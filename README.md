@@ -42,5 +42,9 @@ supporting documentation. Kevin Atkinson makes no representations
 about the suitability of this array for any purpose. It is provided
 "as is" without express or implied warranty.
 
-Overall, this project is:
-![Double Facepalm](public/images/double.png)
+
+Screen Shots:
+
+![Word Invaders 1](public/images/word_invaders1.png)
+
+![Word Invaders 2](public/images/word_invaders2.png)
