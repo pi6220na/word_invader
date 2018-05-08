@@ -380,9 +380,9 @@ function update() {
         // // }
         //
         // //  Run collision                           aliens.children[globalX]
-        //
-        // game.physics.arcade.overlap(weapons.bullets, aliens.children[globalX], collisionHandler, null, this);
-        // game.physics.arcade.overlap(enemyBullets, player, enemyHitsPlayer, null, this);
+
+        game.physics.arcade.overlap(weapons.bullets, aliens.children[globalX], collisionHandler, null, this);
+        game.physics.arcade.overlap(enemyBullets, player, enemyHitsPlayer, null, this);
 
         //  The count of aliens
         countString = 'Aliens Remaining: ';
