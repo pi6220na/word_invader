@@ -3,7 +3,6 @@
 
 var express = require('express');
 var path = require('path');
-//var favicon = require('serve-favicon');
 var logger = require('morgan');
 var cookieParser = require('cookie-parser');
 var session = require('express-session');
@@ -15,10 +14,6 @@ var MongoDBStore = require('connect-mongodb-session')(session);
 var MongoClient = require('mongodb').MongoClient;
 
 
-//var index = require('./routes/index');
-//var users = require('./routes/users');
-
-//var app = express();
 var app = require('express')();
 
 var server = require('http').Server(app);
@@ -26,21 +21,15 @@ var server = require('http').Server(app);
 
 var port = process.env.PORT || 3000;
 
-
-
-//var game = require('./game/game')(io);
-
-
 var index = require('./routes/gameinfo');
-//var index = require('./routes/index');
+
 
 var mongo_url = process.env.MONGO_URL;
-// console.log('mongo_url = ' + mongo_url);
-
 
 //var mongo_url = "mongodb://dbUser:456def@127.0.0.1:27017/invade?authSource=admin";
 
 console.log('app.js    mongo_url = ' + mongo_url);
+
 
 mongoose.Promise = global.Promise;
 mongoose.connect(mongo_url, {useMongoClient: true})
