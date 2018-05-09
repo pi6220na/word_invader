@@ -356,30 +356,6 @@ function update() {
 
     if (player.alive)
     {
-        // //  Reset the player, then check for movement keys
-        // player.body.velocity.setTo(0, 0);
-        //
-        // if (cursors.left.isDown)
-        // {
-        //     player.body.velocity.x = -200;
-        // }
-        // else if (cursors.right.isDown)
-        // {
-        //     player.body.velocity.x = 200;
-        // }
-        //
-        // //  Firing?
-        // if (fireButton.isDown)
-        // {
-        //     fireBullet();
-        // }
-        //
-        // // if (game.time.now > firingTimer)
-        // // {
-        // //     enemyFires();
-        // // }
-        //
-        // //  Run collision                           aliens.children[globalX]
 
         game.physics.arcade.overlap(weapons.bullets, aliens.children[globalX], collisionHandler, null, this);
         game.physics.arcade.overlap(enemyBullets, player, enemyHitsPlayer, null, this);
@@ -452,6 +428,9 @@ function explody(alien) {
 
 }
 
+
+
+
 // this function gets a letter and matches it to all words (aliens). If alien word completely spelled then
 // the alien (word) is exploded and the word is removed from the word array.
 function markLetters(stringIn) {
@@ -464,9 +443,7 @@ function markLetters(stringIn) {
 
     letterCounter++;
 
-    //var num = (letterCounter / (game.time.now - letterTimer)) * 6000;
-    var num = (letterCounter / ((game.time.now - letterTimer) / 1000) * 60);
-    countLetter = num.toFixed(0);
+    updateLetterCounter()
 
     //letterTimer = game.time.now;
 
@@ -475,19 +452,17 @@ function markLetters(stringIn) {
     // console.log('letterCounter ' + letterCounter);
     // console.log(((game.time.now - letterTimer) / letterCounter));
 
-    countLetterText.text = countLstring + countLetter + ' (' + letterCounter + ')';
-
     //console.log('wordsInArray : ' + wordsInArray );
 
     for (var x = 0; x < wordsInArray.length; x++) {
-        
+
         if (wordsInArray[x].startsWith(word_in_progress)) {    // string function startsWith
             //alert('found a partial match')
             changeLetters(word_in_progress, x);
             if ((wordsInArray[x] === word_in_progress) && (word_in_progress !== "")) {
                 //alert('Exact Match!');
                 globalX = x;
-                
+
                 // shoot a bullet at word and make it explode
                 fireWord(aliens.children[x]);
 
@@ -495,10 +470,10 @@ function markLetters(stringIn) {
                 letter = '';
                 word_in_progress = "";
                 wordsInArray[x] = "";
-                
+
                 // loop through all remaining words and reset color back to default
                 resetColors();
-                
+
                 // clear out letters that have been typed text area (top of web page)
                 letter = '';
                 typedText.text = typedString + letter;
@@ -710,23 +685,6 @@ function enemyHitsPlayer (player,bullet) {
     explosion.reset(player.body.x, player.body.y);
     explosion.play('kaboom', 30, false, true);
 
-    // When the player dies
-    // if (lives.countLiving() < 1)
-    // {
-    //     player.kill();
-    //     enemyBullets.callAll('kill');
-    //
-    //     stateText.text = "      Level Complete, \n Click/enter for next Level";
-    //     stateText.visible = true;
-    //
-    //     //the "click to restart" handler
-    //     game.input.onTap.addOnce(restart,this);
-    //     //enter key also restarts game
-    //     var keyEnter = game.input.keyboard.addKey(Phaser.Keyboard.ENTER);
-    //     // keyEnter.onDown.add(console.log('enter key is pressed'));
-    //     keyEnter.onDown.add(restart, this);
-    // }
-
 }
 
 // not used yet
@@ -857,117 +815,13 @@ function onKeyPress(e) {
 
     var myKey = e.which;
 
-    if (myKey === 97) {
-        markLetters('a');
-    } else if (myKey === 98) {
-        markLetters('b');
-    } else if (myKey === 99) {
-        markLetters('c');
-    } else if (myKey === 100) {
-        markLetters('d');
-    } else if (myKey === 101) {
-        markLetters('e');
-    } else if (myKey === 102) {
-        markLetters('f');
-    } else if (myKey === 103) {
-        markLetters('g');
-    } else if (myKey === 104) {
-        markLetters('h');
-    } else if (myKey === 105) {
-        markLetters('i');
-    } else if (myKey === 106) {
-        markLetters('j');
-    } else if (myKey === 107) {
-        markLetters('k');
-    } else if (myKey === 108) {
-        markLetters('l');
-    } else if (myKey === 109) {
-        markLetters('m');
-    } else if (myKey === 110) {
-        markLetters('n');
-    } else if (myKey === 111) {
-        markLetters('o');
-    } else if (myKey === 112) {
-        markLetters('p');
-    } else if (myKey === 113) {
-        markLetters('q');
-    } else if (myKey === 114) {
-        markLetters('r');
-    } else if (myKey === 115) {
-        markLetters('s');
-    } else if (myKey === 116) {
-        markLetters('t');
-    } else if (myKey === 117) {
-        markLetters('u');
-    } else if (myKey === 118) {
-        markLetters('v');
-    } else if (myKey === 119) {
-        markLetters('w');
-    } else if (myKey === 120) {
-        markLetters('x');
-    } else if (myKey === 121) {
-        markLetters('y');
-    } else if (myKey === 122) {
-        markLetters('z');
-    } else if (myKey === 65) {
-        markLetters('A');
-    } else if (myKey === 66) {
-        markLetters('B');
-    } else if (myKey === 67) {
-        markLetters('C');
-    } else if (myKey === 68) {
-        markLetters('D');
-    } else if (myKey === 69) {
-        markLetters('E');
-    } else if (myKey === 70) {
-        markLetters('F');
-    } else if (myKey === 71) {
-        markLetters('G');
-    } else if (myKey === 72) {
-        markLetters('H');
-    } else if (myKey === 73) {
-        markLetters('I');
-    } else if (myKey === 74) {
-        markLetters('J');
-    } else if (myKey === 75) {
-        markLetters('K');
-    } else if (myKey === 76) {
-        markLetters('L');
-    } else if (myKey === 77) {
-        markLetters('M');
-    } else if (myKey === 78) {
-        markLetters('N');
-    } else if (myKey === 79) {
-        markLetters('O');
-    } else if (myKey === 80) {
-        markLetters('P');
-    } else if (myKey === 81) {
-        markLetters('Q');
-    } else if (myKey === 82) {
-        markLetters('R');
-    } else if (myKey === 83) {
-        markLetters('S');
-    } else if (myKey === 84) {
-        markLetters('T');
-    } else if (myKey === 85) {
-        markLetters('U');
-    } else if (myKey === 86) {
-        markLetters('V');
-    } else if (myKey === 87) {
-        markLetters('W');
-    } else if (myKey === 88) {
-        markLetters('X');
-    } else if (myKey === 89) {
-        markLetters('Y');
-    } else if (myKey === 90) {
-        markLetters('Z');
-    }
+    var alpha = 'abcdefghijklmnopqrstuvwxyz'
+    var actionKeys = alpha + alpha.toUpperCase() + ".'"
 
-    if (myKey === 39) {
-        markLetters("'");
-    }
-    if (myKey === 46) {
-        markLetters(".");
+    var character = String.fromCharCode(myKey)
+
+    if (actionKeys.includes(character)) {
+      markLetters(character);
     }
 
     // enter key
@@ -978,240 +832,8 @@ function onKeyPress(e) {
         word_in_progress = "";
         resetColors();
     }
+  }
 
-}
-
-// common English words from http://wordlist.aspell.net/hunspell-readme/
-
-// The collective work is Copyright 2000-2016 by Kevin Atkinson as well
-// as any of the copyrights mentioned below:
-//
-//     Copyright 2000-2016 by Kevin Atkinson
-//
-// Permission to use, copy, modify, distribute and sell these word
-// lists, the associated scripts, the output created from the scripts,
-//     and its documentation for any purpose is hereby granted without fee,
-//     provided that the above copyright notice appears in all copies and
-// that both that copyright notice and this permission notice appear in
-// supporting documentation. Kevin Atkinson makes no representations
-// about the suitability of this array for any purpose. It is provided
-// "as is" without express or implied warranty.
-
-var words = [
-    "Africa","Alaska","Alice","America","Andy","Ann","April","Asia","Atlantic","August",
-    "Aunt","Australia","Autumn","Bay","Ben","Betsy","Bill","Billy","Bob","British",
-    "California","Canada","Carlos","Casey","Charles","Chicago","China","Chinese","Christmas","Columbus",
-    "Dad","Dan","Daniel","Danny","David","Dick","Don","Dr.","Dutch","Eddy",
-    "Edward","Egypt","Ellen","England","Europe","European","Florida","France","Frank","Fred",
-    "French","George","German","Germany","Greece","Greek","Harry","Henry","I","I'd",
-    "I'll","I'm","I've","Illinois","India","Indian","Italian","Italy","James","Jane",
-    "January","Japan","Japanese","Jeff","Jim","Jimmy","Joe","John","Johnny","Johnson",
-    "Jones","July","June","King","Latin","Lee","Lincoln","London","Louis","Mama",
-    "March","Maria","Mark","Mars","Martin","Mary","May","Mexico","Mike","Miss",
-    "Mississippi","Mount","Mr.","Mrs.","Negro","New York","Norway","October","Ohio","Pacific",
-    "Papa","Paris","Paul","Pennsylvania","Peter","Philadelphia","Pole","Richard","Robert","Roman",
-    "Rome","Russia","Russian","Sally","Sam","Saturday","Sir","Smith","Spain","St.",
-    "States","Sunday","TV","Texas","Thomas","Tim","Tom","United","University","Virginia",
-    "Washington","William","Wilson","ability","able","aboard","about","above","accept","accident",
-    "according","account","accurate","acres","across","act","action","active","activity","actual",
-    "actually","add","addition","additional","adjective","adult","adventure","advice","affect","afraid",
-    "after","afternoon","again","against","age","ago","agree","ahead","aid","air",
-    "airplane","alike","alive","all","allow","almost","along","aloud","alphabet","already",
-    "also","although","am","among","amount","an","ancient","and","angle","angry",
-    "animal","announced","another","answer","ants","any","anybody","anyone","anything","anyway",
-    "anywhere","apart","apartment","appearance","apple","applied","appropriate","are","area","aren't",
-    "arm","army","around","arrange","arrangement","arrive","arrow","art","article","as",
-    "aside","ask","asleep","at","ate","atmosphere","atom","atomic","attached","attack",
-    "attempt","attention","audience","author","automobile","available","average","avoid","aware","away",
-    "baby","back","bad","badly","bag","balance","ball","balloon","band","bank",
-    "bar","bare","bark","barn","base","baseball","basic","basis","basket","bat",
-    "battle","be","bean","bear","beat","beautiful","beauty","became","because","become",
-    "becoming","bee","been","before","began","beginning","begun","behavior","behind","being",
-    "believed","bell","belong","below","belt","bend","beneath","bent","beside","best",
-    "bet","better","between","beyond","bicycle","bigger","biggest","bill","birds","birth",
-    "birthday","bit","bite","black","blank","blanket","blew","blind","block","blood",
-    "blow","blue","board","boat","body","bone","book","border","born","both",
-    "bottle","bottom","bound","bow","bowl","box","boy","brain","branch","brass",
-    "brave","bread","break","breakfast","breath","breathe","breathing","breeze","brick","bridge",
-    "brief","bright","bring","broad","broke","broken","brother","brought","brown","brush",
-    "buffalo","build","building","built","buried","burn","burst","bus","bush","business",
-    "busy","but","butter","buy","by","cabin","cage","cake","call","calm",
-    "came","camera","camp","can","can't","canal","cannot","cap","capital","captain",
-    "captured","car","carbon","card","care","careful","carefully","carried","carry","case",
-    "cast","castle","cat","catch","cattle","caught","cause","cave","cell","cent",
-    "center","central","century","certain","certainly","chain","chair","chamber","chance","change",
-    "changing","chapter","character","characteristic","charge","chart","check","cheese","chemical","chest",
-    "chicken","chief","child","children","choice","choose","chose","chosen","church","circle",
-    "circus","citizen","city","class","classroom","claws","clay","clean","clear","clearly",
-    "climate","climb","clock","close","closely","closer","cloth","clothes","clothing","cloud",
-    "club","coach","coal","coast","coat","coffee","cold","collect","college","colony",
-    "color","column","combination","combine","come","comfortable","coming","command","common","community",
-    "company","compare","compass","complete","completely","complex","composed","composition","compound","concerned",
-    "condition","congress","connected","consider","consist","consonant","constantly","construction","contain","continent",
-    "continued","contrast","control","conversation","cook","cookies","cool","copper","copy","corn",
-    "corner","correct","correctly","cost","cotton","could","couldn't","count","country","couple",
-    "courage","course","court","cover","cow","cowboy","crack","cream","create","creature",
-    "crew","crop","cross","crowd","cry","cup","curious","current","curve","customs",
-    "cut","cutting","daily","damage","dance","danger","dangerous","dark","darkness","date",
-    "daughter","dawn","day","dead","deal","dear","death","decide","declared","deep",
-    "deeply","deer","definition","degree","depend","depth","describe","desert","design","desk",
-    "detail","determine","develop","development","diagram","diameter","did","didn't","die","differ",
-    "difference","different","difficult","difficulty","dig","dinner","direct","direction","directly","dirt",
-    "dirty","disappear","discover","discovery","discuss","discussion","disease","dish","distance","distant",
-    "divide","division","do","doctor","does","doesn't","dog","doing","doll","dollar",
-    "don't","done","donkey","door","dot","double","doubt","down","dozen","draw",
-    "drawn","dream","dress","drew","dried","drink","drive","driven","driver","driving",
-    "drop","dropped","drove","dry","duck","due","dug","dull","during","dust",
-    "duty","each","eager","ear","earlier","early","earn","earth","easier","easily",
-    "east","easy","eat","eaten","edge","education","effect","effort","egg","eight",
-    "either","electric","electricity","element","elephant","eleven","else","empty","end","enemy",
-    "energy","engine","engineer","enjoy","enough","enter","entire","entirely","environment","equal",
-    "equally","equator","equipment","escape","especially","essential","establish","etc.","even","evening",
-    "event","eventually","ever","every","everybody","everyone","everything","everywhere","evidence","exact",
-    "exactly","examine","example","excellent","except","exchange","excited","excitement","exciting","exclaimed",
-    "exercise","exist","expect","experience","experiment","explain","explanation","explore","express","expression",
-    "extra","eye","face","facing","fact","factor","factory","failed","fair","fairly",
-    "fall","fallen","familiar","family","famous","far","farm","farmer","farther","fast",
-    "fastened","faster","fat","father","favorite","fear","feathers","feature","fed","feed",
-    "feel","feet","fell","fellow","felt","fence","few","fewer","field","fierce",
-    "fifteen","fifth","fifty","fight","fighting","figure","fill","film","final","finally",
-    "find","fine","finest","finger","finish","fire","fireplace","firm","first","fish",
-    "five","fix","flag","flame","flat","flew","flies","flight","floating","floor",
-    "flow","flower","fly","fog","folks","follow","food","foot","football","for",
-    "force","foreign","forest","forget","forgot","forgotten","form","former","fort","forth",
-    "forty","forward","fought","found","four","fourth","fox","frame","free","freedom",
-    "frequently","fresh","friend","friendly","frighten","frog","from","front","frozen","fruit",
-    "fuel","full","fully","fun","function","funny","fur","furniture","further","future",
-    "gain","game","garage","garden","gas","gasoline","gate","gather","gave","general",
-    "generally","gentle","gently","get","getting","giant","gift","girl","give","given",
-    "giving","glad","glass","globe","go","goes","gold","golden","gone","good",
-    "goose","got","government","grabbed","grade","gradually","grain","grandfather","grandmother","graph",
-    "grass","gravity","gray","great","greater","greatest","greatly","green","grew","ground",
-    "group","grow","grown","growth","guard","guess","guide","gulf","gun","habit",
-    "had","hadn't","hair","half","halfway","hall","hand","handle","handsome","hang",
-    "happen","happened","happily","happy","harbor","hard","harder","hardly","has","hat",
-    "have","haven't","having","hay","he","he'd","he'll","he's","headed","heading",
-    "health","heard","hearing","heart","heat","heavy","height","held","hello","help",
-    "helpful","her","herd","here","herself","hidden","hide","high","higher","highest",
-    "highway","hill","him","himself","his","history","hit","hold","hole","hollow",
-    "home","honor","hope","horn","horse","hospital","hot","hour","house","how",
-    "however","huge","human","hundred","hung","hungry","hunt","hunter","hurried","hurry",
-    "hurt","husband","ice","idea","identity","if","ill","image","imagine","immediately",
-    "importance","important","impossible","improve","in","inch","include","including","income","increase",
-    "indeed","independent","indicate","individual","industrial","industry","influence","information","inside","instance",
-    "instant","instead","instrument","interest","interior","into","introduced","invented","involved","iron",
-    "is","island","isn't","it","its","itself","jack","jar","jet","job",
-    "join","joined","journey","joy","judge","jump","jungle","just","keep","kept",
-    "key","kids","kill","kind","kitchen","knew","knife","know","knowledge","known",
-    "label","labor","lack","lady","laid","lake","lamp","land","language","large",
-    "larger","largest","last","late","later","laugh","law","lay","layers","lead",
-    "leader","leaf","learn","least","leather","leave","leaving","led","left","leg",
-    "length","lesson","let","let's","letter","level","library","lie","life","lift",
-    "light","like","likely","limited","line","lion","lips","liquid","list","listen",
-    "little","live","living","load","local","locate","location","log","lonely","long",
-    "longer","look","loose","lose","loss","lost","lot","loud","love","lovely",
-    "low","lower","luck","lucky","lunch","lungs","lying","machine","machinery","mad",
-    "made","magic","magnet","mail","main","mainly","major","make","making","man",
-    "managed","manner","manufacturing","many","map","mark","market","married","mass","massage",
-    "master","material","mathematics","matter","may","maybe","me","meal","mean","means",
-    "meant","measure","meat","medicine","meet","melted","member","memory","men","mental",
-    "merely","met","metal","method","mice","middle","might","mighty","mile","military",
-    "milk","mill","mind","mine","minerals","minute","mirror","missing","mission","mistake",
-    "mix","mixture","model","modern","molecular","moment","money","monkey","month","mood",
-    "moon","more","morning","most","mostly","mother","motion","motor","mountain","mouse",
-    "mouth","move","movement","movie","moving","mud","muscle","music","musical","must",
-    "my","myself","mysterious","nails","name","nation","national","native","natural","naturally",
-    "nature","near","nearby","nearer","nearest","nearly","necessary","neck","needed","needle",
-    "needs","negative","neighbor","neighborhood","nervous","nest","never","new","news","newspaper",
-    "next","nice","night","nine","no","nobody","nodded","noise","none","noon",
-    "nor","north","nose","not","note","noted","nothing","notice","noun","now",
-    "number","numeral","nuts","object","observe","obtain","occasionally","occur","ocean","of",
-    "off","offer","office","officer","official","oil","old","older","oldest","on",
-    "once","one","only","onto","open","operation","opinion","opportunity","opposite","or",
-    "orange","orbit","order","ordinary","organization","organized","origin","original","other","ought",
-    "our","ourselves","out","outer","outline","outside","over","own","owner","oxygen",
-    "pack","package","page","paid","pain","paint","pair","palace","pale","pan",
-    "paper","paragraph","parallel","parent","park","part","particles","particular","particularly","partly",
-    "parts","party","pass","passage","past","path","pattern","pay","peace","pen",
-    "pencil","people","per","percent","perfect","perfectly","perhaps","period","person","personal",
-    "pet","phrase","physical","piano","pick","picture","pictured","pie","piece","pig",
-    "pile","pilot","pine","pink","pipe","pitch","place","plain","plan","plane",
-    "planet","planned","planning","plant","plastic","plate","plates","play","pleasant","please",
-    "pleasure","plenty","plural","plus","pocket","poem","poet","poetry","point","pole",
-    "police","policeman","political","pond","pony","pool","poor","popular","population","porch",
-    "port","position","positive","possible","possibly","post","pot","potatoes","pound","pour",
-    "powder","power","powerful","practical","practice","prepare","present","president","press","pressure",
-    "pretty","prevent","previous","price","pride","primitive","principal","principle","printed","private",
-    "prize","probably","problem","process","produce","product","production","program","progress","promised",
-    "proper","properly","property","protection","proud","prove","provide","public","pull","pupil",
-    "pure","purple","purpose","push","put","putting","quarter","queen","question","quick",
-    "quickly","quiet","quietly","quite","rabbit","race","radio","railroad","rain","raise",
-    "ran","ranch","range","rapidly","rate","rather","raw","rays","reach","read",
-    "reader","ready","real","realize","rear","reason","recall","receive","recent","recently",
-    "recognize","record","red","refer","refused","region","regular","related","relationship","religious",
-    "remain","remarkable","remember","remove","repeat","replace","replied","report","represent","require",
-    "research","respect","rest","result","return","review","rhyme","rhythm","rice","rich",
-    "ride","riding","right","ring","rise","rising","river","road","roar","rock",
-    "rocket","rocky","rod","roll","roof","room","root","rope","rose","rough",
-    "round","route","row","rubbed","rubber","rule","ruler","run","running","rush",
-    "sad","saddle","safe","safety","said","sail","sale","salmon","salt","same",
-    "sand","sang","sat","satellites","satisfied","save","saved","saw","say","scale",
-    "scared","scene","school","science","scientific","scientist","score","screen","sea","search",
-    "season","seat","second","secret","section","see","seed","seeing","seems","seen",
-    "seldom","select","selection","sell","send","sense","sent","sentence","separate","series",
-    "serious","serve","service","sets","setting","settle","settlers","seven","several","shade",
-    "shadow","shake","shaking","shall","shallow","shape","share","sharp","she","sheep",
-    "sheet","shelf","shells","shelter","shine","shinning","ship","shirt","shoe","shoot",
-    "shop","shore","short","shorter","shot","should","shoulder","shout","show","shown",
-    "shut","sick","sides","sight","sign","signal","silence","silent","silk","silly",
-    "silver","similar","simple","simplest","simply","since","sing","single","sink","sister",
-    "sit","sitting","situation","six","size","skill","skin","sky","slabs","slave",
-    "sleep","slept","slide","slight","slightly","slip","slipped","slope","slow","slowly",
-    "small","smaller","smallest","smell","smile","smoke","smooth","snake","snow","so",
-    "soap","social","society","soft","softly","soil","solar","sold","soldier","solid",
-    "solution","solve","some","somebody","somehow","someone","something","sometime","somewhere","son",
-    "song","soon","sort","sound","source","south","southern","space","speak","special",
-    "species","specific","speech","speed","spell","spend","spent","spider","spin","spirit",
-    "spite","split","spoken","sport","spread","spring","square","stage","stairs","stand",
-    "standard","star","stared","start","state","statement","station","stay","steady","steam",
-    "steel","steep","stems","step","stepped","stick","stiff","still","stock","stomach",
-    "stone","stood","stop","stopped","store","storm","story","stove","straight","strange",
-    "stranger","straw","stream","street","strength","stretch","strike","string","strip","strong",
-    "stronger","struck","structure","struggle","stuck","student","studied","studying","subject","substance",
-    "success","successful","such","sudden","suddenly","sugar","suggest","suit","sum","summer",
-    "sun","sunlight","supper","supply","support","suppose","sure","surface","surprise","surrounded",
-    "swam","sweet","swept","swim","swimming","swing","swung","syllable","symbol","system",
-    "table","tail","take","taken","tales","talk","tall","tank","tape","task",
-    "taste","taught","tax","tea","teach","teacher","team","tears","teeth","telephone",
-    "television","tell","temperature","ten","tent","term","terrible","test","than","thank",
-    "that","that's","the","thee","them","themselves","then","theory","there","there's",
-    "therefore","these","they","they're","thick","thin","thing","think","third","thirty",
-    "this","those","thou","though","thought","thousand","thread","three","threw","throat",
-    "through","throughout","throw","thrown","thumb","thus","thy","tide","tie","tight",
-    "tightly","till","time","tin","tiny","tip","tired","title","to","tobacco",
-    "today","together","told","tomorrow","tone","tongue","tonight","too","took","tool",
-    "top","topic","torn","total","touch","toward","tower","town","toy","trace",
-    "track","trade","traffic","trail","train","transportation","trap","travel","treated","tree",
-    "triangle","tribe","trick","tried","trip","troops","tropical","trouble","truck","trunk",
-    "truth","try","tube","tune","turn","twelve","twenty","twice","two","type",
-    "typical","uncle","under","underline","understanding","unhappy","union","unit","universe","unknown",
-    "unless","until","unusual","up","upon","upper","upward","us","use","useful",
-    "using","usual","usually","valley","valuable","value","vapor","variety","various","vast",
-    "vegetable","verb","vertical","very","vessels","victory","view","village","visit","visitor",
-    "voice","volume","vote","vowel","voyage","wagon","wait","walk","wall","want",
-    "war","warm","warn","was","wash","wasn't","waste","watch","water","wave",
-    "way","we","we'll","we're","we've","weak","wealth","wear","weather","week",
-    "weigh","weight","welcome","well","went","were","weren't","west","western","wet",
-    "whale","what","what's","whatever","wheat","wheel","when","whenever","where","wherever",
-    "whether","which","while","whispered","whistle","white","who","whole","whom","whose",
-    "why","wide","widely","wife","wild","will","willing","win","wind","window",
-    "wing","winter","wire","wise","wish","with","within","without","wolf","women",
-    "won","won't","wonder","wonderful","wood","wooden","wool","word","wore","work",
-    "worker","world","worried","worry","worse","worth","would","wouldn't","wrapped","write",
-    "writer","writing","written","wrong","wrote","yard","year","yellow","yes","yesterday",
-    "yet","you","you'd","you'll","you're","you've","young","younger","your","yourself",
-    "youth","zero","zoo"
-];
 
 
 // code copied from last Fall's WebDev final project
